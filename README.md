@@ -7,6 +7,10 @@ This script has following features:
   * Can choose companion or not.
   * Can use item to restore NRG.
 
+* Multi(Host) farming
+  * Auto battle
+  * Can use item to restore NRG.
+
 * Under construction
   * Buy shards from Whimsy shop automatically.
 
