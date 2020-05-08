@@ -1,0 +1,280 @@
+-- Copyright © 2017 Quaker NTj <quakerntj@hotmail.com>
+-- <https://github.com/quakerntj/ffbe_autoscript>
+
+--[[
+    This script is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This script is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--]]
+
+function hasValue(table, value)
+    local keys = {}
+    local z = 1
+    for k,v in ipairs(table) do
+        if v == value then
+            keys[z] = k
+            z = z + 1
+        end
+    end
+    return keys
+end
+
+function vibratePattern()
+	proVibrate(2)
+	wait(1)
+	proVibrate(2)
+	wait(1)
+	proVibrate(2)
+end
+
+Point = {}
+Point.__index = Point
+Point.mt = {
+	__call = function (cls, ...)
+		return cls.new(...)
+	end,
+}
+
+setmetatable(Point, Point.mt)
+
+function Point.new(x, y)
+	local self = {}
+	setmetatable(self, Point.mt)
+    self.x = x
+    self.y = y
+    self.location = Location(x, y)
+    return self
+end
+
+-- operator+
+function Point.add(a, b)
+    if (typeOf(b) == 'number') then
+        return Point(a.x + b, a.y + b)
+    else
+        return Point(a.x + b.x, a.y + b.y)
+    end
+end
+Point.mt.__add = Point.add
+
+-- operator*
+function Point.mul(a, b)
+    return Point(a.x * b, a.y * b)
+end
+Point.mt.__mul = Point.mul
+
+-- operator/
+function Point.div(a, b)
+    return Point(a.x / b, a.y / b)
+end
+Point.mt.__div = Point.div
+
+-- operator-
+function Point.sub(a, b)
+    if (typeOf(b) == 'number') then
+        return Point(a.x - b, a.y - b)
+    else
+        return Point(a.x - b.x, a.y - b.y)
+    end
+end
+Point.mt.__sub = Point.sub
+
+-- operator minus
+function Point.unm(a)
+    return Point(-a.x, -a.y)
+end
+Point.mt.__unm = Point.unm
+
+-- concatenation
+function Point.concat(lhs, rhs)
+    if (typeOf(lhs) == 'table') then
+        return "(" .. lhs.x .. "," .. lhs.y .. ")" .. rhs
+    else
+        return lhs .. "(" .. rhs.x .. "," .. rhs.y .. ")"
+    end
+end
+Point.mt.__concat = Point.concat
+
+
+Rect = {}
+Rect.__index = Rect
+
+setmetatable(Rect, {
+	__call = function (cls, ...)
+		return cls.new(...)
+	end,
+})
+
+-- x, y, w, h or x0, y0, x1, y1
+function Rect.new(x, y, isWH, w, h)
+	local self = setmetatable({}, Rect)
+	if isWH then
+	    self.x = x
+	    self.y = y
+	    self.w = w
+	    self.h = h
+    else
+        -- w,h is not width/height.  Subtract the offset.
+	    self.x = x
+	    self.y = y
+	    self.w = w - x
+	    self.h = h - y
+    end
+    self.region = Region(self.x, self.y, self.w, self.h)
+    return self
+end
+
+function Rect:getCenter()
+    return Point(self.x + self.w / 2, self.y + self.h / 2)
+end
+
+-- axis 1 and axis 2 are both widht and height.  Will be applied on left-top and right bottom
+function Rect:expand(x0, y0, x1, y1)
+    self.x = self.x - x0
+    self.y = self.y - y0
+    self.w = self.w + x1
+    self.h = self.h + y1
+    self.region = Region(self.x, self.y, self.w, self.h)
+end
+
+function Rect:move(x, y)
+    self.x = self.x + x0
+    self.y = self.y + y0
+    self.region = Region(self.x, self.y, self.w, self.h)
+end
+
+-- Only copy top level, the value still pointer to the same item.
+function shallowcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in pairs(orig) do
+            copy[orig_key] = orig_value
+        end
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
+function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
+function iconcat(dest, offset, count, src)
+    local c = 0
+    local o = offset
+    for k, v in ipairs(src) do
+        dest[offset] = v
+        o = o + 1
+        c = c + 1
+        if c > count then
+            return
+        end
+    end
+end
+
+-- Create a new class that inherits from a base class
+--
+function inheritsFrom( baseClass )
+
+    -- The following lines are equivalent to the SimpleClass example:
+
+    -- Create the table and metatable representing the class.
+    local new_class = {}
+    local class_mt = { __index = new_class }
+
+    -- Note that this function uses class_mt as an upvalue, so every instance
+    -- of the class will share the same metatable.
+    --
+    function new_class:create()
+        local newinst = {}
+        setmetatable( newinst, class_mt )
+        return newinst
+    end
+
+    -- The following is the key to implementing inheritance:
+
+    -- The __index member of the new class's metatable references the
+    -- base class.  This implies that all methods of the base class will
+    -- be exposed to the sub-class, and that the sub-class can override
+    -- any of these methods.
+    --
+    if baseClass then
+        setmetatable( new_class, { __index = baseClass } )
+    end
+
+    return new_class
+end
+
+function readAll(file)
+    local f = assert(io.open(file, "rb"))
+    local content = f:read("*all")
+    f:close()
+    return content
+end
+
+function scandir(directory)
+    local listFile = scriptPath() .. "__list"
+    local command = "ls " .. directory .. " > " .. listFile
+    os.execute(command)
+
+    local lines = {}
+    local i = 1
+    for line in io.lines(listFile) do
+        lines[#lines + 1] = line
+    end
+
+    os.execute("rm " .. listFile)
+    return lines
+end
+
+function vibrate(times)
+    for time = 0,times do
+        proVibrate(2)
+        wait(2)
+    end
+end
+
+function checkRegion(region, imageName)
+    if DEBUG then region:highlight(HIGHLIGHT_TIME) end
+    return region:exists(imageName)
+    --wait(waitSec)
+    --if DEBUG then region:highlight(self.highlightTime) end
+    --if not region:exists(imageName) then
+    --    return checkRegion(region, imageName, waitSec)
+    --end
+    --return true
+end
+
+function clickRegion(region, imageName)
+    if DEBUG then region:highlight(HIGHLIGHT_TIME) end
+    return region:existsClick(imageName)
+end
+
+function clickLocation(x, y)
+    region = Region(x, y, CLICK_BLOCK_W, CLICK_BLOCK_H)
+    if DEBUG then region:highlight(HIGHLIGHT_TIME) end
+    location = Location(x, y)
+    click(location)
+end
