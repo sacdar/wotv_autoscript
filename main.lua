@@ -17,7 +17,7 @@ Y = screen:getY()
 resolution = 1280
 Settings:setCompareDimension(true, resolution)--執行圖形比對時螢度的解析度。根據compareByWidth的值的值設定成寬度或高度
 Settings:setScriptDimension(true, X)--用於參考App解析度腳本內座標位置
-Settings:set("MinSimilarity", 0.9)
+Settings:set("MinSimilarity", 0.8)
 setImagePath(WORK_DIR.."image."..resolution.."/")
 logDir = scriptPath().."log/"
 DEBUG = true

@@ -276,7 +276,7 @@ function Event:looper()
                     end
                 end
             end
-            self:finish("InWhimsyShopPage")
+            finish("InWhimsyShopPage")
         end,
     }
 
@@ -316,12 +316,7 @@ function Event:looper()
         end
     end
     writeLog("a", "SCRIPT_END")
-    self:finish("腳本結束")
-end
-
-function Event:finish(reason)
-    print("Quest clear:"..self.loopCount.."/"..self.looperCountMax.."("..self.totalTimer:check().."s)")
-    scriptExit(reason)
+    finish("腳本結束")
 end
 
 function Event:handleBuyShard(name)

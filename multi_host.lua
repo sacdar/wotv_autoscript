@@ -171,10 +171,5 @@ function MultiHost:looper()
         end
     end
     writeLog("a", "SCRIPT_END")
-    self:finish("腳本結束")
-end
-
-function MultiHost:finish(reason)
-    print("Quest clear:"..self.loopCount.."/"..self.looperCountMax.."("..self.totalTimer:check().."s)")
-    scriptExit(reason)
+    finish("腳本結束")
 end

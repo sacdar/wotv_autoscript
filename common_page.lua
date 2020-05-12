@@ -32,7 +32,6 @@ end
 
 function handleRestoreNRGSmall()
     if checkRegion(USEITEMROW1_REGION, "RestoreNRGSmall.png") then
-        if DEBUG then USEITEMADDROW1_REGION:highlight(self.highlightTime) end
         if clickRegion(USEITEMADDROW1_REGION, "RestoreNRGAvailable.png") then
             clickLocation(RESTORENRG_X, RESTORENRG_Y)
             wait(1)
@@ -70,15 +69,15 @@ function handleRestoreNRG(restoreNrg, restoreNrgCount, restoreNrgCountMax, nrgRe
                 if nrgRestoreType == 1 then
                     dragDrop(Location(USEITEMBIGDRAGDROPFROM_X, USEITEMBIGDRAGDROPFROM_Y), Location(USEITEMBIGDRAGDROPTO_X, USEITEMBIGDRAGDROPTO_Y))
                     if not handleRestoreNRGBig() then
-                        self:finish("體力道具不足")
+                        finish("體力道具不足")
                     end
                 elseif nrgRestoreType == 2 then
                     if not handleRestoreNRGMedium() then
-                        self:finish("體力道具不足")
+                        finish("體力道具不足")
                     end
                 elseif nrgRestoreType == 3 then
                     if not handleRestoreNRGSmall() then
-                        self:finish("體力道具不足")
+                        finish("體力道具不足")
                     end
                 elseif nrgRestoreType == 4 then
                     dragDrop(Location(USEITEMBIGDRAGDROPFROM_X, USEITEMBIGDRAGDROPFROM_Y), Location(USEITEMBIGDRAGDROPTO_X, USEITEMBIGDRAGDROPTO_Y))
@@ -86,7 +85,7 @@ function handleRestoreNRG(restoreNrg, restoreNrgCount, restoreNrgCountMax, nrgRe
                         dragDrop(Location(USEITEMBIGDRAGDROPTO_X, USEITEMBIGDRAGDROPTO_Y), Location(USEITEMBIGDRAGDROPFROM_X, USEITEMBIGDRAGDROPFROM_Y))
                         if not handleRestoreNRGMedium() then
                             if not handleRestoreNRGSmall() then
-                                self:finish("體力道具不足")
+                                finish("體力道具不足")
                             end
                         end
                     end
@@ -95,7 +94,7 @@ function handleRestoreNRG(restoreNrg, restoreNrgCount, restoreNrgCountMax, nrgRe
                         if not handleRestoreNRGMedium() then
                             dragDrop(Location(USEITEMBIGDRAGDROPFROM_X, USEITEMBIGDRAGDROPFROM_Y), Location(USEITEMBIGDRAGDROPTO_X, USEITEMBIGDRAGDROPTO_Y))
                             if not handleRestoreNRGBig() then
-                                self:finish("體力道具不足")
+                                finish("體力道具不足")
                             end
                         end
                     end
@@ -113,4 +112,9 @@ function handleRestoreNRG(restoreNrg, restoreNrgCount, restoreNrgCountMax, nrgRe
     end
 
     return true
+end
+
+function finish(reason)
+    print("Quest clear:"..self.loopCount.."/"..self.looperCountMax.."("..self.totalTimer:check().."s)")
+    scriptExit(reason)
 end
