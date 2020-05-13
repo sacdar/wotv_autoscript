@@ -119,6 +119,7 @@ function MultiHost:looper()
 
         ["InResult"] = function(farmer)
             wait(4)
+            handleShardsExceeded()
             if checkRegion(FRIENDREQUESTS_REGION, "DialogLabel.png") then
                 clickLocation(REQUESTCANCEL_X, REQUESTCANCEL_Y)
                 wait(1)

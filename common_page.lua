@@ -1,3 +1,11 @@
+function handleShardsExceeded()
+    if checkRegion(SHARDDREACHEDMAX_REGION, "DialogLabel.png") then
+        wait(1)
+        clickLocation(SHARDDREACHEDMAXOK_X, SHARDDREACHEDMAXOK_Y)
+        wait(1)
+    end
+end
+
 function handleRestoreNRGBig()
     if checkRegion(USEITEMROW2_REGION, "RestoreNRGBig.png") then
         if clickRegion(USEITEMADDROW2_REGION, "RestoreNRGAvailable.png") then

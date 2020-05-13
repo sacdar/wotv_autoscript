@@ -207,11 +207,7 @@ function Event:looper()
 
         ["InResult"] = function(farmer)
             wait(2)
-            if checkRegion(SHARDDREACHEDMAX_REGION, "DialogLabel.png") then
-                wait(1)
-                clickLocation(SHARDDREACHEDMAXOK_X, SHARDDREACHEDMAXOK_Y)
-                wait(1)
-            end
+            handleShardsExceeded()
             if checkRegion(INFEVERPAGE_REGION, "Fever.png") then
                 writeLog("a", self.loopCount.."_FEVER_AVAILABLE")
                 wait(1)
