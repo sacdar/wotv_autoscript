@@ -15,7 +15,6 @@ function MultiHost.new()
     self.restoreNrg = false
     self.restoreNrgCount = 0
     self.restoreNrgCountMax = 0
-    self.recordLog = true
 
     self.state = "InEmbarkPage"
     self.States = {
@@ -46,8 +45,6 @@ end
 
 function MultiHost:init()
     dialogInit()
-    RECORD_LOG = true
-    addCheckBox("RECORD_LOG", "記錄日誌", true)newRow()
     LOOPER_COUNT_MAX = 0
     addTextView("執行次數:(0 = 無限次數)")addEditNumber("LOOPER_COUNT_MAX", 0)newRow()
     SCAN_INTERVAL = 4
@@ -65,7 +62,6 @@ function MultiHost:init()
 
     LOG_FILENAME = logDir..os.date("%Y%m%d%H%M%S").."_log.txt"
     self.looperCountMax = LOOPER_COUNT_MAX
-    self.recordLog = RECORD_LOG
     self.scanInterval = SCAN_INTERVAL
     proSetScanInterval(SCAN_INTERVAL)
     self.restoreNrg = RESTORE_NRG
@@ -93,9 +89,9 @@ function MultiHost:looper()
                     if checkRegion(NRGNOTENOUGH_REGION, "DialogLabel.png") then
                         clickLocation(NRGRESTOREYES_X, NRGRESTOREYES_Y)
                     end
-                    if checkRegion(CONFIRMEMBARK_REGION, "DialogLabel.png") then
-                        clickLocation(CONFIRMEMBARKOK_X, CONFIRMEMBARKOK_Y)
-                    end
+                    --if checkRegion(CONFIRMEMBARK_REGION, "DialogLabel.png") then
+                    --    clickLocation(CONFIRMEMBARKOK_X, CONFIRMEMBARKOK_Y)
+                    --end
                 end
                 return "CheckInEmbarkPage"
             end
@@ -104,6 +100,7 @@ function MultiHost:looper()
         end,
 
         ["CheckInEmbarkPage"] = function(farmer)
+            wait(4)
             if checkRegion(INMULTIEMBARKPAGE_REGION, "InMultiEmbarkPage.png") then
                 return "InEmbarkPage"
             end
@@ -141,12 +138,10 @@ function MultiHost:looper()
     questTimer:set()
 
     self.loopCount = 0
-    if self.recordLog then
-        writeLog("w", "SCRIPT_BEGIN")
-    end
+    writeLog("w", "SCRIPT_BEGIN")
     while self.looperCountMax == 0 or self.loopCount < self.looperCountMax do
         if DEBUG then toast(self.state.." count = "..self.loopCount.." count max = "..self.looperCountMax) end
-        if self.state == "InBattle" then
+        if self.state == "CheckInEmbarkPage" then
             writeLog("a", self.loopCount.."_BATTLE_BEGIN")
         end
         -- run state machine

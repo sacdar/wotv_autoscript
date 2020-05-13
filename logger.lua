@@ -1,5 +1,5 @@
 function writeLog(mode, log)
-    if DEBUG then
+    if RECORD_LOG then
         logFile = io.open(LOG_FILENAME, mode)
         logFile:write(os.date("%Y%m%d%H%M%S"))
         logFile:write(","..log.."\n")

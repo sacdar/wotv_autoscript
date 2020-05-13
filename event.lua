@@ -19,8 +19,6 @@ function Event.new()
     self.restoreNrg = false
     self.restoreNrgCount = 0
     self.restoreNrgCountMax = 0
-    self.recordLog = true
-
     self.state = "InEmbarkPage"
     self.States = {
         "InEmbarkPage",
@@ -103,7 +101,6 @@ function Event:init()
 
     LOG_FILENAME = logDir..os.date("%Y%m%d%H%M%S").."_log.txt"
     self.looperCountMax = LOOPER_COUNT_MAX
-    self.recordLog = RECORD_LOG
     self.eventType = EVENT_TYPE
     self.eventIndex = EVENT_INDEX
     self.levelIndex = LEVEL_INDEX
@@ -286,9 +283,7 @@ function Event:looper()
     questTimer:set()
 
     self.loopCount = 0
-    if self.recordLog then
-        writeLog("w", "SCRIPT_BEGIN")
-    end
+    writeLog("w", "SCRIPT_BEGIN")
     while self.looperCountMax == 0 or self.loopCount < self.looperCountMax do
         if DEBUG then toast(self.state.." count = "..self.loopCount.." count max = "..self.looperCountMax) end
         if self.state == "InEmbarkPage" or self.state == "ToBattle" then

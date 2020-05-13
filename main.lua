@@ -37,13 +37,14 @@ dialogInit()
 FUNC=1
 LOGINDEX=1
 
-BRIGHTNESS = false IMMERSIVE = true
+BRIGHTNESS = false IMMERSIVE = true RECORD_LOG = false
 addRadioGroup("FUNC", 1)addRadioButton("活動", 1)
 addRadioButton("協力(開房)", 2)newRow()
 addRadioButton("檢視日誌", 3)newRow()
 addRadioButton("清除日誌", 4)newRow()
 addCheckBox("BRIGHTNESS", "螢幕亮度最低 ", true)newRow() -- brightness low
 --addCheckBox("IMMERSIVE", "Immersive", true)newRow()
+addCheckBox("RECORD_LOG", "記錄日誌", true)newRow()
 addCheckBox("DEBUG", "Debug ", true)addCheckBox("PRO", "專業版", false)newRow() -- for PRO version
 
 dialogShow("選擇自動化功能")
